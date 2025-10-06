@@ -12,8 +12,9 @@ setup(
     packages=find_packages(),  # 自动发现你的包，无需手动列出
     classifiers=[  # 分类器，帮助用户在PyPI上找到你的库
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: Apache License",
-        "Operating System :: OS Independent",
+        "Development Status :: 2 - Pre-Alpha",
+        "Framework :: Buildout :: Extension",
+        "License :: OSI Approved :: Apache Software License",
     ],
     python_requires=">=3.10",  # 指定支持的Python版本
     install_requires=[  # 列出你的库所依赖的第三方包
