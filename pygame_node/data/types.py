@@ -1,22 +1,21 @@
 
 from typing import Tuple, Union, Optional
-from objprint import op
 
 class Color:
     def __init__(self, *args, **kwargs) -> None:
         """
         创建颜色类型
         示例:
-        # >>> Color((255, 255, 255, 0.7))
-        # Color(255, 255, 255, 0.7)
-        # >>> Color(255, 255, 255, 0.2)
-        # Color(255, 255, 255, 0.2)
-        # >>> Color("0xffffff")
-        # Color(255, 255, 255, 0.0)
-        # >>> Color("0xfff")
-        # Color(255, 255, 255, 0.0)
-        # >>> Color(Color(255, 255, 255, 0.5))
-        # Color(255, 255, 255, 0.5)
+        >>> Color((255, 255, 255, 0.7))
+        Color(255, 255, 255, 0.7)
+        >>> Color(255, 255, 255, 0.2)
+        Color(255, 255, 255, 0.2)
+        >>> Color("0xffffff")
+        Color(255, 255, 255, 0.0)
+        >>> Color("0xfff")
+        Color(255, 255, 255, 0.0)
+        >>> Color(Color(255, 255, 255, 0.5))
+        Color(255, 255, 255, 0.5)
 
         :param args:
         :param kwargs:

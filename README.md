@@ -1,5 +1,7 @@
 # PygameNode
 使用 [`Node`](docs/Node.md) 结构管理Pygame资源, 以便快速制作/管理游戏.
+
+还未开发完成
 ## 1. 快速开始
 使用 `pip install pygame_node` 安装这个库.
 
