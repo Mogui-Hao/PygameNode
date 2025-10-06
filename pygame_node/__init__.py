@@ -5,5 +5,5 @@ from pygame_node.node import Node, TextNode, TextButtonNode
 from pygame_node.scene import SceneManager, BaseScene
 from pygame_node.event import EventHandler, EventFunction, EventPriority
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 

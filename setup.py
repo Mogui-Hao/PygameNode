@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
+from pygame_node import __version__
 
 setup(
     name="pygame_node",  # 这是将来pip install时使用的名字，确保在PyPI上唯一
-    version="0.0.1",        # 遵循语义化版本规范
+    version=__version__,        # 遵循语义化版本规范
     author="MoGui-Hao",
     author_email="mogui_hao@outlook.com",
     description="Use Node structures to manage Pygame resources for rapid game creation and management.",
