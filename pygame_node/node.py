@@ -5,9 +5,9 @@ from pygame import Rect, Vector3, Surface
 from pygame.font import Font
 from typing import Tuple, List, Callable
 
-from .event import EventHandler, EventPriority
-from .data.event import PointerClickEvent, PointerDownEvent, PointerUpEvent, PointerEvent, Event, PointerMoveEvent, WindowDropFileEvent
-from .attribute.style import Style, TextStyle
+from pygame_node.event import EventHandler, EventPriority
+from pygame_node.data.event import PointerClickEvent, PointerDownEvent, PointerUpEvent, PointerEvent, Event, PointerMoveEvent, WindowDropFileEvent
+from pygame_node.attribute.style import Style, TextStyle
 
 
 class Node:
@@ -199,6 +199,10 @@ class TextNode(Node):
         return self.font.render(self.text, self.antialias, self.style.color.rgb)
 
     @property
+    def mask(self):
+        return pygame.mask.from_surface(self.render)
+
+    @property
     def size(self):
         return self.render.get_size()
 
@@ -211,7 +215,7 @@ class TextNode(Node):
             scene.blit(*self.text_shadow(text))
         scene.blit(text, (self.x, self.y))
 
-    def text_stroke(self, text_surface: Surface):
+    def text_stroke(self, text_surface: Surface) -> Surface:
         """绘制带描边的文本"""
         stroke_size = self.style.stroke.size
 
@@ -242,7 +246,7 @@ class TextNode(Node):
         # scene.blit(stroke_surface, (self.x - stroke_size, self.y - stroke_size))
         return stroke_surface
 
-    def text_shadow(self, text_surface: Surface):
+    def text_shadow(self, text_surface: Surface) -> Tuple[Surface, Tuple[int, int]]:
         """绘制带阴影和旋转的文本"""
         # 保存原始文本表面的尺寸和中心点
         original_rect = text_surface.get_rect(topleft=(self.x, self.y))
@@ -296,6 +300,5 @@ class TextButtonNode(TextNode):
 
         self.event(self.on_click)
 
-    def on_click(self, event: WindowDropFileEvent):
-        print(event.file)
-        ...
+    def on_click(self, event: PointerDownEvent):
+        print(event)

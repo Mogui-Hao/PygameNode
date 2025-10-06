@@ -4,7 +4,7 @@ from typing import List, Tuple
 
 from pygame import Vector2
 
-from data.keys import MouseButton
+from pygame_node.data.keys import MouseButton
 
 
 @dataclass(slots=True)

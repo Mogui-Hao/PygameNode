@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Callable, Optional
 
-from .data.event import Event
+from pygame_node.data.event import Event
 
 
 class EventPriority(Enum):

@@ -108,6 +108,8 @@ UI系统中所有可视化元素的基类，提供通用的位置、大小、样
 ### 属性
 完全继承自 `TextNode`，无额外属性。
 
+[a](../pygame_node/node.py 11:1)
+
 ### 方法
 
 #### `on_click(event: PointerClickEvent) -> None`

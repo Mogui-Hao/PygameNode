@@ -35,15 +35,19 @@ classDiagram
     WindowEvent <|-- WindowDropFileEvent
 ```
 
+<a id="event"></a>
 ## Event 基类
 所有事件类的基类, 提供通用的事件处理接口. 
 
+<a id="event-property"></a>
 ### 属性
 无具体属性, 作为抽象基类使用. 
 
+<a id="pointerevent"></a>
 ## PointerEvent 事件
-继承自 [`Event`](#event-基类), 表示指针（鼠标）相关事件. 
+继承自 [`Event`](#event), 表示指针（鼠标）相关事件. 
 
+<a id="pointerevent-property"></a>
 ### 属性
 
 | 类型              | 属性             | 说明      | 默认值                 |
@@ -52,31 +56,39 @@ classDiagram
 | **Vector2**     | `pos`          | 鼠标位置坐标  | `Vector2(0, 0)`     |
 
 ### 子类
-1. [`PointerDownEvent`](#pointerdownevent-事件) 指针按下事件
-2. [`PointerUpEvent`](#pointerupevent-事件) 指针松开事件
-3. [`PointerClickEvent`](#pointerclickevent-事件) 指针点击事件
+1. [`PointerDownEvent`](#pointerdownevent) 指针按下事件
+2. [`PointerUpEvent`](#pointerupevent) 指针松开事件
+3. [`PointerClickEvent`](#pointerclickevent) 指针点击事件
 
+<a id="pointerdownevent"></a>
 ## PointerDownEvent 事件
-继承自 [`PointerEvent`](#pointerevent-事件), 表示指针按下事件. 
+继承自 [`PointerEvent`](#pointerevent), 表示指针按下事件. 
 
+<a id="pointerdownevent-property"></a>
 ### 属性
-继承自 [`PointerEvent`](#属性-1), 无额外属性. 
+继承自 [`PointerEvent`](#pointerevent-property), 无额外属性. 
 
+<a id="pointerupevent"></a>
 ## PointerUpEvent 事件
-继承自 [`PointerEvent`](#pointerevent-事件), 表示指针松开事件. 
+继承自 [`PointerEvent`](#pointer-event), 表示指针松开事件. 
 
+<a id="pointerupevent-property"></a>
 ### 属性
-完全继承自 [`PointerEvent`](#属性-1), 无额外属性. 
+完全继承自 [`PointerEvent`](#pointerevent-property), 无额外属性. 
 
+<a id="pointerclickevent"></a>
 ## PointerClickEvent 事件
-继承自 [`PointerEvent`](#pointerevent-事件), 表示指针完整点击事件（按下+释放）. 
+继承自 [`PointerEvent`](#pointer-event), 表示指针完整点击事件（按下+释放）. 
 
+<a id="pointerclickevent-property"></a>
 ### 属性
-完全继承自 [`PointerEvent`](#属性-1), 无额外属性. 
+完全继承自 [`PointerEvent`](#pointerevent-property), 无额外属性. 
 
+<a id="pointermoveevent"></a>
 ## PointerMoveEvent 事件
-继承自 [`Event`](#event-基类), 表示指针移动事件. 
+继承自 [`Event`](#event), 表示指针移动事件. 
 
+<a id="pointermoveevent-property"></a>
 ### 属性
 
 | 类型          | 属性        | 说明      | 默认值             |
@@ -85,9 +97,11 @@ classDiagram
 | **Vector2** | `rel`     | 指针相对位移值 | `Vector2(0, 0)` |
 | **tuple**   | `buttons` | 按键状态元组  | `(0, 0, 0)`     |
 
+<a id="keyevent"></a>
 ## KeyEvent 事件
-继承自 [`Event`](#event-基类), 表示键盘按键事件. 
+继承自 [`Event`](#event), 表示键盘按键事件. 
 
+<a id="keyevent-property"></a>
 ### 属性
 
 | 类型      | 属性        | 说明   | 默认值  |
@@ -95,24 +109,30 @@ classDiagram
 | **int** | `keycode` | 按键编码 | 无默认值 |
 
 ### 子类
-1. [`KeyDownEvent`](#keydownevent-事件) 按键按下事件
-2. [`KeyUpEvent`](#keyupevent-事件) 按键松开事件
+1. [`KeyDownEvent`](#keydownevent) 按键按下事件
+2. [`KeyUpEvent`](#keyupevent) 按键松开事件
 
+<a id="keydownevent"></a>
 ## KeyDownEvent 事件
-继承自 [`KeyEvent`](#keyevent-事件), 表示按键按下事件. 
+继承自 [`KeyEvent`](#keyevent), 表示按键按下事件. 
 
+<a id="keydownevent-property"></a>
 ### 属性
-完全继承自 [`KeyEvent`](#属性-5), 无额外属性. 
+完全继承自 [`KeyEvent`](#keyevent-property), 无额外属性. 
 
+<a id="keyupevent"></a>
 ## KeyUpEvent 事件
-继承自 [`KeyEvent`](#keyevent-事件), 表示按键松开事件. 
+继承自 [`KeyEvent`](#keyevent), 表示按键松开事件. 
 
+<a id="keyupevent-property"></a>
 ### 属性
-完全继承自 [`KeyEvent`](#属性-5), 无额外属性. 
+完全继承自 [`KeyEvent`](#keyevent-property), 无额外属性. 
 
+<a id="windowevent"></a>
 ## WindowEvent 事件
-继承自 [`Event`](#event-基类), 表示窗口相关事件. 
+继承自 [`Event`](#event), 表示窗口相关事件. 
 
+<a id="windowevent-property"></a>
 ### 属性
 
 | 类型      | 属性       | 说明    | 默认值  |
@@ -120,13 +140,15 @@ classDiagram
 | **int** | `window` | 窗口标识符 | 无默认值 |
 
 ### 子类
-1. [`WindowDropFileEvent`](#windowdropfileevent-事件) 窗口文件拖放事件
+1. [`WindowDropFileEvent`](#windowdropfileevent) 窗口文件拖放事件
 
+<a id="windowdropfileevent"></a>
 ## WindowDropFileEvent 事件
-继承自 [`WindowEvent`](#windowevent-事件), 表示文件拖放到窗口事件. 
+继承自 [`WindowEvent`](#windowevent), 表示文件拖放到窗口事件. 
 
+<a id="windowdropfileevent-property"></a>
 ### 属性
-继承自[`WindowEvent`](#属性-9), 额外属性:
+继承自[`WindowEvent`](#windowevent-property), 额外属性:
 
 | 类型               | 属性     | 说明     | 默认值  |
 |------------------|--------|--------|------|

@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from enum import Flag, auto, Enum, unique
 from typing import Optional, Tuple
-from data.types import Color
+from pygame_node.data.types import Color
 
 @dataclass
 class Style:
