@@ -6,7 +6,7 @@ setup(
     author="MoGui-Hao",
     author_email="mogui_hao@outlook.com",
     description="Use Node structures to manage Pygame resources for rapid game creation and management.",
-    long_description=open("README.md").read(),  # 将README内容作为长描述
+    long_description=open("README.md", encoding="utf-8").read(),  # 将README内容作为长描述
     long_description_content_type="text/markdown",
     url="https://github.com/Mogui-Hao/PygameNode",  # 项目主页，如GitHub地址
     packages=find_packages(),  # 自动发现你的包，无需手动列出
