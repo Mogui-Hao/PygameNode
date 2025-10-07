@@ -64,7 +64,6 @@ pygame.quit()
 可在场景对象里添加初始化函数
 
 ```python
-import pygame.font
 from pygame_node import *
 from pygame.math import Vector3
 
@@ -78,7 +77,7 @@ class MainScene(BaseScene):
         super().init(params)
         # 创建一个文本 "It's a Text Node." 的 TextNode
         # 位置在Vector3(200, 200, 0)
-        text = TextNode("It's a Text Node.", position=Vector3(200, 200, 0), font=pygame.font.Font(size=72))
+        text = TextNode("It's a Text Node.", position=Vector3(200, 200, 0), font=Font(size=72))
 
         # 添加到场景中
         self.addNode(text)
@@ -91,7 +90,7 @@ import pygame
 from pygame_node import *
 
 pygame.init()
-Node.font = pygame.font.Font(size=72)   # 定义全局字体
+Node.font = Font(size=72)   # 定义全局字体默认字体
 ```
 
 运行后文字和背景是一个色的, 所以要修改背景色或文字颜色后才能看到.

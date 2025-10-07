@@ -20,21 +20,22 @@ classDiagram
         +Surface surface
         +Mask mask
         +EventHandler event
-        +List children
+        +list[Node] children
+        -Style __style__
         +draw(Surface scene) None
         +update(float dt) None
+        -reload_render() None
     }
     
     class TextNode {
         +str text
         +Font font
-        +bool antialias
         +TextStyle style
-        +tuple size
+        +bool antialias
         +Surface render
-        +draw(Surface scene) None
+        -Font __font__
         +text_stroke(Surface text_surface) Surface
-        +text_shadow(Surface text_surface) (Surface, tuple)
+        +text_shadow(Surface text_surface) Surface
     }
     
     class TextButtonNode {
@@ -77,19 +78,22 @@ UI系统中所有可视化元素的基类，提供通用的位置、大小、样
 #### `update(dt: float) -> None`
 更新节点的状态。参数`dt`表示自上次更新以来经过的时间（秒）。该方法会递归更新所有子节点的状态。
 
+#### `reload_render() -> None`
+刷新节点渲染
+
 ## TextNode 类
 继承自 `Node`，专门用于显示文本内容的节点，支持高级文本渲染效果如描边和阴影。
 
 ### 属性
 
-| 类型 | 属性 | 说明 | 默认值 |
-|------|------|------|--------|
-| **str** | `text` | 要显示的文本内容 | 传入参数 |
-| **Font** | `font` | 文本渲染使用的字体 | 继承自Node.font或传入参数 |
-| **bool** | `antialias` | 是否启用抗锯齿渲染 | `False` |
-| **TextStyle** | `style` | 文本特有的样式配置 | `TextStyle()` |
-| **tuple** | `size` | 文本渲染后的实际尺寸 | 根据文本内容计算 |
-| **Surface** | `render` | 渲染后的文本表面 | 根据文本和样式生成 |
+| 类型            | 属性          | 说明         | 默认值               |
+|---------------|-------------|------------|-------------------|
+| **str**       | `text`      | 要显示的文本内容   | 传入参数              |
+| **Font**      | `font`      | 文本渲染使用的字体  | 继承自Node.font或传入参数 |
+| **bool**      | `antialias` | 是否启用抗锯齿渲染  | `False`           |
+| **TextStyle** | `style`     | 文本特有的样式配置  | `TextStyle()`     |
+| **tuple**     | `size`      | 文本渲染后的实际尺寸 | 根据文本内容计算          |
+| **Surface**   | `render`    | 渲染后的文本表面   | 根据文本和样式生成         |
 
 ### 方法
 
@@ -99,16 +103,17 @@ UI系统中所有可视化元素的基类，提供通用的位置、大小、样
 #### `text_stroke(text_surface: Surface) -> Surface`
 为文本表面添加描边效果。通过在多方向偏移绘制来实现描边，返回处理后的表面。
 
-#### `text_shadow(text_surface: Surface) -> (Surface, tuple)`
-为文本表面添加阴影效果。根据样式中的阴影配置计算阴影位置和透明度，返回阴影表面和位置信息。
+#### `text_shadow(text_surface: Surface) -> Surface`
+为文本表面添加阴影效果。根据样式中的阴影配置计算阴影位置和透明度，返回处理后的表面。
+
+#### `reload_render() -> None`
+刷新文本渲染.
 
 ## TextButtonNode 类
 继承自 `TextNode`，专门用于创建可交互的文本按钮，自动处理点击事件。
 
 ### 属性
 完全继承自 `TextNode`，无额外属性。
-
-[a](../pygame_node/node.py 11:1)
 
 ### 方法
 

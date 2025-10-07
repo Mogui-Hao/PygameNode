@@ -4,19 +4,18 @@ from typing import Dict, List
 
 import pygame
 from pygame import Surface
-from pygame.font import Font
 from pygame.math import Vector2
 
-from pygame_node.node import Node
-from pygame_node.event import EventHandler
+from pygame_node.data.event import PointerDownEvent, PointerUpEvent, KeyDownEvent, KeyUpEvent, PointerMoveEvent, \
+    WindowDropFileEvent
 from pygame_node.data.keys import MouseButton
-from pygame_node.data.event import PointerDownEvent, PointerClickEvent, PointerUpEvent, KeyDownEvent, KeyUpEvent, PointerMoveEvent, WindowDropFileEvent
+from pygame_node.event import EventHandler
+from pygame_node.node import Node
 
 
 class BaseScene:
     """场景基类"""
 
-    # font: Font = None
     ROOT_PATH = os.path.dirname(__file__)
     RESOURCES_PATH = os.path.join(ROOT_PATH, "resources")
     TEXTURES_PATH = os.path.join(RESOURCES_PATH, "textures")
