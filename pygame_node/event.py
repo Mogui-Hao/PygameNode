@@ -47,11 +47,6 @@ class EventHandler:
         else:
             raise TypeError("EventHandler() missing 1 required positional argument: 'event'")
 
-        # if issubclass(params[-1].annotation, Event):
-        #     self.events.append(EventFunction(func, priority, params[-1].annotation))
-        # else:
-        #     raise TypeError("EventHandler() missing 1 required positional argument: 'event'")
-
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             return func(*args, **kwargs)

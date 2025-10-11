@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Tuple
+from typing import Tuple
 
 from pygame import Vector2
 
@@ -9,7 +9,8 @@ from pygame_node.data.keys import MouseButton
 
 @dataclass(slots=True)
 class Event:
-    ...
+    node: 'Node'
+    scene: "BaseScene"
 
 @dataclass(slots=True)
 class PointerEvent(Event):

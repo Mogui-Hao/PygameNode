@@ -40,12 +40,12 @@ class BaseScene:
                 match event.type:
                     case pygame.MOUSEBUTTONDOWN:
                         if self.__is_hovered(event, n):
-                            n.event.call_function(PointerDownEvent(button_index=MouseButton(event.button), pos=Vector2(event.pos)))
-                    case pygame.MOUSEBUTTONUP: n.event.call_function(PointerUpEvent(button_index=MouseButton(event.button), pos=Vector2(event.pos)))
-                    case pygame.MOUSEMOTION: n.event.call_function(PointerMoveEvent(buttons=event.buttons, pos=Vector2(event.pos), rel=Vector2(event.rel)))
-                    case pygame.KEYDOWN: n.event.call_function(KeyDownEvent(keycode=event.key))
-                    case pygame.KEYUP: n.event.call_function(KeyUpEvent(keycode=event.key))
-                    case pygame.DROPFILE: n.event.call_function(WindowDropFileEvent(file=Path(event.file)))
+                            n.event.call_function(PointerDownEvent(node=n, scene=self, button_index=MouseButton(event.button), pos=Vector2(event.pos)))
+                    case pygame.MOUSEBUTTONUP: n.event.call_function(PointerUpEvent(node=n, scene=self, button_index=MouseButton(event.button), pos=Vector2(event.pos)))
+                    case pygame.MOUSEMOTION: n.event.call_function(PointerMoveEvent(node=n, scene=self, buttons=event.buttons, pos=Vector2(event.pos), rel=Vector2(event.rel)))
+                    case pygame.KEYDOWN: n.event.call_function(KeyDownEvent(node=n, scene=self, keycode=event.key))
+                    case pygame.KEYUP: n.event.call_function(KeyUpEvent(node=n, scene=self, keycode=event.key))
+                    case pygame.DROPFILE: n.event.call_function(WindowDropFileEvent(node=n, scene=self, file=Path(event.file)))
                     case _: ...
 
     def __is_hovered(self, event: pygame.event.Event, node: Node) -> bool:
