@@ -1,10 +1,12 @@
 import math
 from copy import deepcopy
+from pathlib import Path
 from typing import Tuple, List
 
 import pygame
 from pygame import Rect, Vector3, Surface, Mask
 
+from pygame_node.data.node import Size
 from pygame_node.data.font import Font
 from pygame_node.attribute.style import Style, TextStyle
 from pygame_node.data.event import PointerDownEvent
@@ -21,7 +23,7 @@ class Node:
                  position: Vector3 = None,                  # 坐标
                  visible: bool = True,                      # 是否显示
                  rotation: float = 0.0,                     # 旋转
-                 size: Tuple[int, int] = None,              # 大小
+                 size: Size = None,                         # 大小
                  style: Style = None) -> None:
         self._name = name
         self._parent = parent
@@ -29,10 +31,10 @@ class Node:
         self.children: List['Node'] = []
         self._visible = visible
         self._rotation = rotation
-        self._size = size or (0, 0)
+        self._size = Size(*(size if size is not None else (-1, -1)))
         self._position = position or Vector3(0, 0, 0)
         self._event = EventHandler()
-        self._surface: Surface = Surface(size, pygame.SRCALPHA)
+        self._surface: Surface = Surface((0, 0), pygame.SRCALPHA)
         self.__style__ = deepcopy(self.style)
         self.rect
         # self._surface = Surface((self.width, self.height), pygame.SRCALPHA)
@@ -67,14 +69,22 @@ class Node:
         self.reload_render()
 
     @property
-    def size(self) -> Tuple[int, int]:
+    def size(self) -> Size:
         """获取大小"""
         return self._size
+
+    @size.setter
+    def size(self, value) -> None:
+        if isinstance(value, (tuple, Size)):
+            self._size = Size(*value)
+        else:
+            raise ValueError("Size")
+        self.reload_render()
 
     @property
     def rect(self) -> Rect:
         """获取矩形区域"""
-        return Rect(self._position.xy, self.size)
+        return Rect(self._position.xy, (self.size.width, self.size.height))
 
     @property
     def x(self) -> int:
@@ -103,12 +113,12 @@ class Node:
     @property
     def width(self) -> int:
         """获取宽"""
-        return self.size[0]
+        return self.size.width
 
     @property
     def height(self) -> int:
         """获取高"""
-        return self.size[1]
+        return self.size.height
 
     @property
     def visible(self) -> bool:
@@ -143,7 +153,7 @@ class Node:
         if not self.visible:
             return
         if self.style.background.color is not None:
-            res = Surface(self.size, pygame.SRCALPHA)
+            res = Surface((self.width, self.height), pygame.SRCALPHA)
             pygame.draw.rect(res, self.style.background.color.rgba, (0, 0, self.width, self.height),
                              border_radius=self.style.background.border_radius)
             scene.blit(res, (self.x, self.y))
@@ -168,7 +178,7 @@ class TextNode(Node):
                  position: Vector3 = Vector3(0, 0, 0),
                  visible: bool = True,
                  rotation: float = 0.0,
-                 size: Tuple[int, int] = (0, 0),
+                 size: Size = None,
                  style: Style = None):
         super().__init__(name or "TextNode", parent, position=position, visible=visible, rotation=rotation, size=size, style=style or TextStyle())
         self._rect = None
@@ -224,8 +234,8 @@ class TextNode(Node):
         return pygame.mask.from_surface(self.render)
 
     @property
-    def size(self) -> Tuple[int, int]:
-        return self.render.get_size()
+    def size(self) -> Size:
+        return Size(*self.render.get_size())
 
     def draw(self, scene: Surface) -> None:
         super().draw(scene)
@@ -254,8 +264,8 @@ class TextNode(Node):
             stroke_surface.blit(text_surface, (offset_x, offset_y))
 
         # 用描边颜色填充所有绘制过的区域
-        for x in range(self.size[0]):
-            for y in range(self.size[1]):
+        for x in range(self.size.width):
+            for y in range(self.size.height):
                 if stroke_surface.get_at((x, y))[3] > 0:  # 如果有像素存在
                     stroke_surface.set_at((x, y), self.style.stroke.color.rgb)
 
@@ -361,7 +371,7 @@ class TextButtonNode(TextNode):
                  position: Vector3 = Vector3(0, 0, 0),
                  visible: bool = True,
                  rotation: float = 0.0,
-                 size: Tuple[int, int] = (0, 0),
+                 size: Size = None,
                  style: Style = TextStyle()):
         super().__init__(text, font, antialias, name, parent, position=position, visible=visible, rotation=rotation,
                          size=size, style=style)
@@ -370,3 +380,46 @@ class TextButtonNode(TextNode):
 
     def on_click(self, event: PointerDownEvent):
         print(event)
+
+class Sprite2D(Node):
+    def __init__(self,
+                 image: Surface | Path | str,
+                 name: str = None,
+                 parent: 'Node' = None,
+                 *,
+                 position: Vector3 = Vector3(0, 0, 0),
+                 visible: bool = True,
+                 rotation: float = 0.0,
+                 size: Size = None,
+                 style: Style = None):
+        super().__init__(name, parent, position=position, visible=visible, rotation=rotation,
+                             size=size, style=style)
+        if isinstance(image, Surface):
+            self._image = image
+        elif isinstance(image, (Path, str)):
+            self._image = pygame.image.load(str(Path(image)))
+        else:
+            raise ValueError("Image")
+        self.reload_render()
+
+    @property
+    def image(self):
+        return self._image
+
+    @property
+    def surface(self) -> Surface:
+        return self._surface
+
+    def draw(self, scene: Surface) -> None:
+        super().draw(scene)
+        if self.__style__ != self.style:
+            self.reload_render()
+        scene.blit(self.surface, (self.x, self.y))
+
+    def reload_render(self) -> None:
+        if not (self.size.width < 0 and self.size.height < 0):
+            self._surface = pygame.transform.scale(self.image, (*self.size,))
+        else:
+            self._surface = self.image
+            self._size = Size(*self.image.get_size())
+        self.__style__ = self.style

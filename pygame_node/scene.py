@@ -16,11 +16,11 @@ from pygame_node.node import Node
 class BaseScene:
     """场景基类"""
 
-    ROOT_PATH = os.path.dirname(__file__)
-    RESOURCES_PATH = os.path.join(ROOT_PATH, "resources")
-    TEXTURES_PATH = os.path.join(RESOURCES_PATH, "textures")
-    FONTS_PATH = os.path.join(RESOURCES_PATH, "font")
-    AUDIOS_PATH = os.path.join(RESOURCES_PATH, "audio")
+    ROOT_PATH = Path(os.path.dirname(os.path.realpath(__file__))).parent
+    RESOURCES_PATH = ROOT_PATH / "resources"
+    TEXTURES_PATH = RESOURCES_PATH / "textures"
+    FONTS_PATH = RESOURCES_PATH / "font"
+    AUDIOS_PATH = RESOURCES_PATH / "audio"
 
     def __init__(self, name: str, params: 'BaseScene' = None) -> None:
         """
@@ -33,7 +33,7 @@ class BaseScene:
 
     def events(self, events: List[pygame.event.Event]) -> None:
         """处理场景事件（子类实现）"""
-        for n in self.nodes[::-1]:
+        for n in self.nodes:
             if len(n.event.events) == 0:
                 continue
             for event in events:
