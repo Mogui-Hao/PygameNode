@@ -77,7 +77,7 @@ class MainScene(BaseScene):
         super().init(params)
         # 创建一个文本 "It's a Text Node." 的 TextNode
         # 位置在Vector3(200, 200, 0)
-        text = TextNode("It's a Text Node.", position=Vector3(200, 200, 0), font=Font(size=72))
+        text = Text("It's a Text Node.", position=Vector3(200, 200, 0), font=Font(size=72))
 
         # 添加到场景中
         self.addNode(text)

@@ -64,7 +64,8 @@ class BaseScene:
     def draw(self, screen: Surface) -> None:
         """绘制场景内容（子类实现）"""
         for _node in self.nodes:
-            _node.draw(screen)
+            if _node.visible:
+                _node.draw(screen)
 
     def init(self, params: 'BaseScene' = None) -> None:
         """进入场景时触发的初始化操作"""

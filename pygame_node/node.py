@@ -1,15 +1,18 @@
 import math
+from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
-from typing import Tuple, List
+from typing import Tuple, List, Dict
 
 import pygame
 from pygame import Rect, Vector3, Surface, Mask
+import numpy as np
 
+from pygame_node import MouseButton
 from pygame_node.data.node import Size
 from pygame_node.data.font import Font
 from pygame_node.attribute.style import Style, TextStyle
-from pygame_node.data.event import PointerDownEvent
+from pygame_node.data.event import PointerDownEvent, PointerUpEvent, PointerMoveEvent
 from pygame_node.event import EventHandler
 
 
@@ -125,6 +128,11 @@ class Node:
         """是否显示"""
         return self._visible
 
+    @visible.setter
+    def visible(self, value) -> bool:
+        """是否显示"""
+        self._visible = bool(value)
+
     @property
     def rotation(self) -> float:
         """获取旋转角度"""
@@ -164,9 +172,11 @@ class Node:
             _node.update(dt)
 
     def reload_render(self) -> None:
-        ...
+        """刷新渲染缓存"""
 
-class TextNode(Node):
+class Text(Node):
+    """文本"""
+
     def __init__(self,
                  text: str,                 # 文本
                  font: Font = None,         # 字体
@@ -360,7 +370,9 @@ class TextNode(Node):
 
         self._surface = text_surface
 
-class TextButtonNode(TextNode):
+class TextButton(Text):
+    """文本按钮"""
+
     def __init__(self,
                  text: str,
                  font: Font = None,
@@ -377,11 +389,27 @@ class TextButtonNode(TextNode):
                          size=size, style=style)
 
         self.event(self.on_click)
+        self.event(self.up_click)
 
     def on_click(self, event: PointerDownEvent):
-        print(event)
+        """被鼠标按下时修改样式"""
+        if (event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP or
+                event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP): return
+        self.style.color.r *= 1.2
+        self.style.color.g *= 1.2
+        self.style.color.b *= 1.2
+
+    def up_click(self, event: PointerUpEvent):
+        """鼠标松开时恢复样式"""
+        if (event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP or
+                event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP): return
+        self.style.color.r /= 1.2
+        self.style.color.g /= 1.2
+        self.style.color.b /= 1.2
 
 class Sprite2D(Node):
+    """2D 精灵"""
+
     def __init__(self,
                  image: Surface | Path | str,
                  name: str = None,
@@ -397,18 +425,14 @@ class Sprite2D(Node):
         if isinstance(image, Surface):
             self._image = image
         elif isinstance(image, (Path, str)):
-            self._image = pygame.image.load(str(Path(image)))
+            self._image = pygame.image.load(str(Path(image))).convert_alpha()
         else:
             raise ValueError("Image")
         self.reload_render()
 
     @property
-    def image(self):
+    def image(self) -> Surface:
         return self._image
-
-    @property
-    def surface(self) -> Surface:
-        return self._surface
 
     def draw(self, scene: Surface) -> None:
         super().draw(scene)
@@ -423,3 +447,136 @@ class Sprite2D(Node):
             self._surface = self.image
             self._size = Size(*self.image.get_size())
         self.__style__ = self.style
+
+class TextureButton(Sprite2D):
+    """精灵按钮"""
+
+    def __init__(self,
+                 image: Surface | Path | str,
+                 name: str = None,
+                 parent: 'Node' = None,
+                 *,
+                 position: Vector3 = Vector3(0, 0, 0),
+                 visible: bool = True,
+                 rotation: float = 0.0,
+                 size: Size = None,
+                 style: Style = TextStyle()):
+        super().__init__(image, name, parent, position=position, visible=visible, rotation=rotation,
+                         size=size, style=style)
+        self.default_su = self.surface
+        self.chick = self.pixel_operations(1.1, lambda x, y: x * y)
+
+        self.event(self.on_click)
+        self.event(self.up_click)
+
+    def on_click(self, event: PointerDownEvent):
+        """被鼠标按下时修改样式"""
+        if (event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP or
+                event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP): return
+        self._surface = self.chick
+
+    def up_click(self, event: PointerUpEvent):
+        """鼠标松开时恢复样式"""
+        if (event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP or
+                event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP): return
+        self._surface = self.default_su
+
+
+    def pixel_operations(self, coefficient: float, op_func) -> pygame.Surface:
+        """对图像做操作"""
+        rgb_array = pygame.surfarray.array3d(self.surface)  # 3D数组 (width, height, 3)
+        alpha_array = pygame.surfarray.array_alpha(self.surface)  # 2D数组 (width, height)
+
+        rgb_float = rgb_array.astype(np.float32)
+        rgb_float = op_func(rgb_float, coefficient)
+        rgb_processed = np.clip(rgb_float, 0, 255).astype(np.uint8)
+
+        result_surface = pygame.Surface(self.surface.get_size(), pygame.SRCALPHA, 32)
+
+        result_rgb = pygame.surfarray.pixels3d(result_surface)  # RGB通道
+        result_alpha = pygame.surfarray.pixels_alpha(result_surface)  # Alpha通道
+
+        result_rgb[:, :, :] = rgb_processed
+
+        result_alpha[:, :] = alpha_array
+
+        del result_rgb
+        del result_alpha
+
+        return result_surface
+
+    def reload_render(self) -> None:
+        super().reload_render()
+        self.default_su = self.surface
+        self.chick = self.pixel_operations(1.1, lambda x, y: x * y)
+
+class Tile(Sprite2D):
+    """瓦片"""
+
+    def __init__(self, image: Surface | Path | str, **kwargs):
+        super().__init__(image)
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+class TileMapLayer(Node):
+    """
+    瓦片地图图层
+    """
+
+    def __init__(self,
+                 tilemap: Surface | Path | str,
+                 tile_size: Size,
+                 name: str = None,
+                 parent: 'Node' = None,
+                 *,
+                 position: Vector3 = Vector3(0, 0, 0),
+                 visible: bool = True,
+                 rotation: float = 0.0,
+                 size: Size = None,
+                 style: Style = None):
+        super().__init__(name, parent, position=position, visible=visible, rotation=rotation,
+                             size=size, style=style)
+        if isinstance(tilemap, Surface):
+            self._tilemap = tilemap
+        elif isinstance(tilemap, (Path, str)):
+            self._tilemap = pygame.image.load(str(Path(tilemap)))
+        else:
+            raise ValueError("Tilemap")
+        self._tilesize = Size(*tile_size)
+        self.tiles: List[Tile] = []
+        self.map: Dict[int, Dict[int, Dict[int, Dict]]] = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
+        for y in range(0, self.tilemap.get_height(), tile_size[1]):
+            for x in range(0, self.tilemap.get_width(), tile_size[0]):
+                self.tiles.append(Tile(self.tilemap.subsurface((x, y, tile_size[0], tile_size[1]))))
+
+    @property
+    def tilemap(self) -> Surface:
+        """返回瓦砖"""
+        return self._tilemap
+
+    @property
+    def tilesize(self) -> Size:
+        """返回瓦片大小"""
+        return self._tilesize
+
+    def __getitem__(self, item) -> Tile:
+        return self.tiles[item]
+
+    def __len__(self) -> int:
+        return len(self.tiles)
+
+    def set_cell(self, pos: Vector3, cell_id: int) -> None:
+        """
+        添加瓦片
+        :param pos: 瓦片位置
+        :param cell_id: 瓦片id
+        :return:
+        """
+        pos = Vector3(pos)
+        self.map[pos.x][pos.y][pos.z] = cell_id
+
+    def draw(self, scene: Surface) -> None:
+        for x, _xdata in self.map.items():
+            for y, _ydata in _xdata.items():
+                for z, cell_id in {k: _ydata[k] for k in sorted(_ydata.keys())}.items():
+                    scene.blit(self.tiles[cell_id].surface, (self.x + x * self.tilesize.width, self.y + y * self.tilesize.height))

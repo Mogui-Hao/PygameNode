@@ -27,7 +27,7 @@ classDiagram
         -reload_render() None
     }
     
-    class TextNode {
+    class Text {
         +str text
         +Font font
         +TextStyle style
@@ -38,12 +38,36 @@ classDiagram
         +text_shadow(Surface text_surface) Surface
     }
     
-    class TextButtonNode {
+    class TextButton {
         +on_click(Event event) None
+        +up_click(Event evnet) None
     }
     
-    Node <|-- TextNode
-    TextNode <|-- TextButtonNode
+    class Sprite2D {
+        +Surface image
+    }
+    
+    class TextureButton {
+        +on_click(Event event) None
+        +up_click(Event evnet) None
+    }
+    
+    class Tile {
+        
+    }
+    
+    class TileMapLayer {
+        +Surface tilemap
+        +Size tile_size
+        +set_cell(Vector3 pos, int cell_id) None
+    }
+    
+    Node <|-- Text
+    Node <|-- Sprite2D
+    Sprite2D <|-- TextureButton
+    Sprite2D <|-- Tile
+    Node <|-- TileMapLayer
+    Text <|-- TextButton
 ```
 
 ## Node 基类
@@ -81,7 +105,7 @@ UI系统中所有可视化元素的基类，提供通用的位置、大小、样
 #### `reload_render() -> None`
 刷新节点渲染
 
-## TextNode 类
+## Text 类
 继承自 `Node`，专门用于显示文本内容的节点，支持高级文本渲染效果如描边和阴影。
 
 ### 属性
@@ -109,7 +133,7 @@ UI系统中所有可视化元素的基类，提供通用的位置、大小、样
 #### `reload_render() -> None`
 刷新文本渲染.
 
-## TextButtonNode 类
+## TextButton 类
 继承自 `TextNode`，专门用于创建可交互的文本按钮，自动处理点击事件。
 
 ### 属性
@@ -118,5 +142,7 @@ UI系统中所有可视化元素的基类，提供通用的位置、大小、样
 ### 方法
 
 #### `on_click(event: PointerClickEvent) -> None`
-按钮点击事件的处理方法。当按钮被点击时自动调用，开发中。
+按钮点击事件的处理方法。
 
+#### `up_click(event: PointerClickEvent) -> None`
+按钮松开事件的处理方法。
